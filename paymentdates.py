@@ -19,22 +19,41 @@ def payTime(startDate, endDate, convention, period): #date_format = 'yyyy-mm-dd'
     if eDateTup[0] > sDateTup[0]:
         endMonths += 12*(eDateTup[0]-sDateTup[0])
     if endMonths > sDateTup[1]:
+        endYear = sDateTup[0]
+
         for i in range(sDateTup[1], endMonths):
-            modI = (i % 12)
-            if modI == 0: modI = 12
-            nDate = (str(sDateTup[0]) +'-'+ str(modI) +'-'+ str(calendar.monthrange(sDateTup[0],modI)[1]))
-            modJ = ((i + 1) % 12)
-            if modJ == 0: modJ = 12
-            # need to increase year here
-            endYear = sDateTup[0]
-            if modJ < modI: endYear += 1
-            bDate = (str(endYear) +'-'+ str(modJ) + '-01')
-            datesList.append(datetime.strptime(nDate, '%Y-%m-%d').date())
-            datesList.append(datetime.strptime(bDate, '%Y-%m-%d').date())
+
+            modI = (i % 12)          # first month
+            if modI == 0: modI = 12  # first month
+            modJ = ((i + 1) % 12)    # second month
+            if modJ == 0: modJ = 12  # second month
+            periodIter = calendar.monthrange(sDateTup[0],modI)[1]
+
+            if period == 'monthly':
+                nDate = (str(endYear) +'-'+ str(modI) +'-'+ str(periodIter))
+                if modJ < modI: endYear += 1
+                bDate = (str(endYear) +'-'+ str(modJ) + '-01')
+                datesList.append(datetime.strptime(nDate, '%Y-%m-%d').date())
+                datesList.append(datetime.strptime(bDate, '%Y-%m-%d').date())
+
+            if period == 'bimonthly':
+                if (sDateTup[2] < (periodIter / 2) and i == sDateTup[1]) or (i > sDateTup[1]):# and eDate > (datesList[-1]+)):
+                    midMonthDate = str(endYear) +'-'+ str(modI) +'-'+ str(periodIter/2)
+                    datesList.append(datetime.strptime(midMonthDate, '%Y-%m-%d').date())
+
+                    midMonthDateNext = str(endYear) +'-'+ str(modI) +'-'+ str((periodIter/2)+1)
+                    datesList.append(datetime.strptime(midMonthDateNext, '%Y-%m-%d').date())
+
+                # if (eDateTup[2] )
+                nDate = (str(endYear) +'-'+ str(modI) +'-'+ str(periodIter))
+                if modJ < modI: endYear += 1
+                bDate = (str(endYear) +'-'+ str(modJ) + '-01')
+                datesList.append(datetime.strptime(nDate, '%Y-%m-%d').date())
+                datesList.append(datetime.strptime(bDate, '%Y-%m-%d').date())
 
     datesList.sort()
     datesArr = []
-    while len(datesList) > 2:
+    while len(datesList) > 2:          # breaks dates array into sets of two
         datesArr.append(datesList[:2])
         datesList = datesList[2:]
     datesArr.append(datesList)
