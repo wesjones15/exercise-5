@@ -49,19 +49,16 @@ def payTime(startDate, endDate, convention, period): #date_format = 'yyyy-mm-dd'
             tempDateList.append(datesList[u])
     tempDateList.append(sDate)
     tempDateList.append(eDate)
+    if convention == 'adjusted': # pushes date forward if it occurs on weekend
+        for u in range(len(tempDateList)):
+            eachDate = tempDateList[u].weekday()
+            if eachDate >= 5:
+                tempDateList[u] = tempDateList[u] + timedelta(7 - int(eachDate))
     tempDateList.sort()
-
-        # if penultimate values are too close to endDate, remove
-        # ensure that there are an even number of values in array
-
-# remove duplicates
-# if penultimate value is too close to end date, remove it
-# add adjusted convention
 
     datesArr = []
     while len(tempDateList) > 2:          # breaks dates array into sets of two
         datesArr.append(tempDateList[:2])
         tempDateList = tempDateList[2:]
     datesArr.append(tempDateList)
-    print datesArr
     return datesArr
