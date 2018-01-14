@@ -1,7 +1,5 @@
-# convert input dates to datetime format
-# separate by months
-
-from datetime import datetime, date, timedelta
+from datetime import datetime, date
+from dateutil.relativedelta import relativedelta as rd
 import calendar
 
 def payTime(startDate, endDate, convention, period): #date_format = 'yyyy-mm-dd'
@@ -10,50 +8,47 @@ def payTime(startDate, endDate, convention, period): #date_format = 'yyyy-mm-dd'
     sDateTup = date.timetuple(sDate)
     eDateTup = date.timetuple(eDate)
 
-    datesList = [sDate, eDate]   # date array with start and end
+    datesList = [eDate, sDate]   # date array with start and end
     endMonths = eDateTup[1]      # end date month
     if eDateTup[0] > sDateTup[0]: # determines no. of months between start and end dates
         endMonths += 12*(eDateTup[0]-sDateTup[0]) # endMonths-sDateTup[1] is the actual value for no. of months
     endYear = sDateTup[0]   # sets year variable to start year
-    if period == 'monthly' or period == 'bimonthly':
+    if 'monthly' in period:
         stRange = sDateTup[1]
         endRange = endMonths+1
-        mp = True
-    if period == 'annually' or period == 'biannually':
+    if 'annually' in period:
         stRange = endYear
         endRange = eDateTup[0]+1
-        mp = False
 
     for i in range(stRange, endRange): # loops from start month to end month
-        modI = (i % 12)          # first month
-        if modI == 0: modI = 12  # first month 1-12
-        modJ = ((i + 1) % 12)    # second month
-        if modJ == 0: modJ = 12  # second month 1-12
-        periodIter = calendar.monthrange(endYear,modI)[1] # determines days in month i
-        if period == 'annually': monthBreaks = ['-01-01', '-12-31']
-        if period == 'biannually': monthBreaks = ['-01-01', '-06-30', '-07-01', '-12-31']
-        if period == 'monthly': monthBreaks = [01, periodIter]
-        if period == 'bimonthly': monthBreaks = [01, (periodIter/2), (periodIter/2)+1, periodIter]
+        endYear = date.timetuple(datesList[-1])[0]
+        periodIter = calendar.monthrange(endYear,date.timetuple(datesList[-1])[1])[1] # determines days in month i
 
+        if period == 'annually': monthBreaks = [rd(years=1,days=-1), rd(years=1)]
+        if period == 'biannually': monthBreaks = [rd(months=6,days=-1), rd(months=6), rd(years=1,days=-1), rd(years=1)]
+        if period == 'monthly': monthBreaks = [rd(months=1,days=-1),rd(months=1)]
+        if period == 'bimonthly': monthBreaks = [rd(days=(periodIter/2)-1), rd(days=periodIter/2),rd(months=1,days=-1),rd(months=1)]
+
+        tempList = []
         for j in range(len(monthBreaks)):
-            if mp == True: moda = str('-'+ str(modI) +'-'+ str(monthBreaks[j]))
-            if mp == False: moda = str(monthBreaks[j]) # moda is '-month-day'
-            date_added = (str(endYear) + moda)
-            datesList.append(datetime.strptime(date_added, '%Y-%m-%d').date())
-
-        if modJ < modI or mp == False: endYear += 1
+            date_added = datesList[-1] + monthBreaks[j]
+            tempList.append(date_added)
+        datesList += tempList
 
     tempDateList = []
     for u in range(len(datesList)):
-        if datesList[u] > sDate and datesList[u] < (eDate - timedelta(3)): # td is number of days new cycle cutoff
+        if datesList[u] > sDate and datesList[u] < (eDate - rd(days=3)): # td is number of days new cycle cutoff
             tempDateList.append(datesList[u])
     tempDateList.append(sDate)
     tempDateList.append(eDate)
+
     if convention == 'adjusted': # pushes date forward if it occurs on weekend
         for u in range(len(tempDateList)):
             eachDate = tempDateList[u].weekday()
             if eachDate >= 5:
-                tempDateList[u] = tempDateList[u] + timedelta(7 - int(eachDate))
+                anotherTempValue = tempDateList[u] + rd(days=(7 - int(eachDate)))
+                if anotherTempValue in tempDateList: anotherTempValue += rd(days=1)
+                tempDateList[u] = anotherTempValue
     tempDateList.sort()
 
     datesArr = []

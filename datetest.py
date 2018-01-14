@@ -6,6 +6,14 @@ import calendar
 
 class PayTestCase(unittest.TestCase):
 
+    def test_dad_ex(self):
+        expectedResult = [[date(2017, 01, 03), date(2017, 02, 02)], [date(2017, 02, 03), date(2017, 03, 02)], [date(2017, 03, 03), date(2017, 03, 31)]]
+        self.assertEqual(payTime('2017-01-03', '2017-03-31', 'unadjusted', 'monthly'), expectedResult)
+
+    def test_proper_adjusted(self):
+        expectedResult = [[date(2017, 03, 03), date(2017, 04, 03)], [date(2017, 04, 04), date(2017, 05, 02)], [date(2017, 05, 03), date(2017, 06, 01)]]
+        self.assertEqual(payTime('2017-03-03', '2017-06-01', 'adjusted', 'monthly'), expectedResult)
+
     def test_partial_month(self):
         expectedResult = [[date(2017, 01, 01), date(2017, 01, 15)]]
         self.assertEqual(payTime('2017-01-01', '2017-01-15', 'unadjusted', 'monthly'), expectedResult)
@@ -23,15 +31,15 @@ class PayTestCase(unittest.TestCase):
         self.assertEqual(payTime('2017-12-01', '2018-01-18', 'unadjusted', 'monthly'), expectedResult)
 
     def test_many_years(self):
-        expectedResult = [[date(2014, 12, 02), date(2014, 12, 31)], [date(2015, 01, 01), date(2015, 01, 31)], [date(2015, 02, 01), date(2015, 02, 15)]]
+        expectedResult = [[date(2014, 12, 02), date(2015, 01, 01)], [date(2015, 01, 02), date(2015, 02, 01)], [date(2015, 02, 02), date(2015, 02, 15)]]
         self.assertEqual(payTime('2014-12-02', '2015-02-15', 'unadjusted', 'monthly'), expectedResult)
 
     def test_period_monthly(self):
-        expectedResult = [[date(2015, 04, 23), date(2015, 04, 30)], [date(2015, 05, 01), date(2015, 05, 30)]]
+        expectedResult = [[date(2015, 04, 23), date(2015, 05, 22)], [date(2015, 05, 23), date(2015, 05, 30)]]
         self.assertEqual(payTime('2015-04-23', '2015-05-30', 'unadjusted', 'monthly'), expectedResult)
 
     def test_period_bimonthly(self):
-        expectedResult = [[date(2015, 04, 02), date(2015, 04, 15)], [date(2015, 04, 16), date(2015, 04, 30)]]
+        expectedResult = [[date(2015, 04, 02), date(2015, 04, 16)], [date(2015, 04, 17), date(2015, 04, 30)]]
         self.assertEqual(payTime('2015-04-02', '2015-04-30', 'unadjusted', 'bimonthly'), expectedResult)
 
     def test_close_bimonthly(self):
@@ -39,16 +47,20 @@ class PayTestCase(unittest.TestCase):
         self.assertEqual(payTime('2015-04-02', '2015-04-16', 'unadjusted', 'bimonthly'), expectedResult)
 
     def test_annually_period(self):
-        expectedResult = [[date(2014, 04, 03), date(2014, 12, 31)], [date(2015, 01, 01), date(2015, 02, 05)]]
-        self.assertEqual(payTime('2014-04-03', '2015-02-05', 'unadjusted', 'annually'), expectedResult)
+        expectedResult = [[date(2014, 04, 07), date(2015, 04, 06)], [date(2015, 04, 07), date(2015, 07, 19)]]
+        self.assertEqual(payTime('2014-04-07', '2015-07-19', 'unadjusted', 'annually'), expectedResult)
+
+    def test_annual_period(self):
+        expectedResult = [[date(2014, 04, 07), date(2015, 04, 06)], [date(2015, 04, 07), date(2016, 02, 05)]]
+        self.assertEqual(payTime('2014-04-07', '2016-02-05', 'unadjusted', 'annually'), expectedResult)
+
+    # add test for annual adjusted
 
     def test_period_biannually(self):
-        expectedResult = [[date(2014, 04, 03), date(2014, 06, 30)], [date(2014, 07, 01), date(2014, 12, 31)], [date(2015, 01, 01), date(2015, 06, 27)]]
+        expectedResult = [[date(2014, 04, 03), date(2014, 10, 02)], [date(2014, 10, 03), date(2015, 04, 02)], [date(2015, 04, 03), date(2015, 06, 27)]]
         self.assertEqual(payTime('2014-04-03', '2015-06-27', 'unadjusted', 'biannually'), expectedResult)
 
-    def test_convention_adjusted(self):
-        expectedResult =[[date(2004, 03, 15), date(2004, 03, 31)], [date(2004, 04, 01), date(2004, 04, 30)], [date(2004, 05, 03), date(2004, 05, 25)]]
-        self.assertEqual(payTime('2004-03-14', '2004-05-25', 'adjusted', 'monthly'), expectedResult)
+
 
     # add test for adjusted using calendar monthrange func[0] and 1day til its a businss day
     # this change canjust be added onto removal/sorting part of paydateside
