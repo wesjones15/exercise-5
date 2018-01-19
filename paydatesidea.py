@@ -2,7 +2,7 @@ from datetime import datetime, date
 from dateutil.relativedelta import relativedelta as rd
 import calendar
 
-def payTime(startDate, endDate, convention, period): #date_format = 'yyyy-mm-dd'
+def payTime(startDate, endDate, convention, period, format): #date_format = 'yyyy-mm-dd'
     sDate = datetime.strptime(startDate, '%Y-%m-%d').date()
     eDate = datetime.strptime(endDate, '%Y-%m-%d').date()
     sDateTup = date.timetuple(sDate)
@@ -56,4 +56,10 @@ def payTime(startDate, endDate, convention, period): #date_format = 'yyyy-mm-dd'
         datesArr.append(tempDateList[:2])
         tempDateList = tempDateList[2:]
     datesArr.append(tempDateList)
+
+    if format == 'string':
+        for i in range(len(datesArr)):
+            for j in range(len(datesArr[i])):
+                datesArr[i][j] = datesArr[i][j].strftime('%Y-%m-%d')
+
     return datesArr
