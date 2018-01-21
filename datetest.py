@@ -71,5 +71,5 @@ class PayTestCase(unittest.TestCase):
     # add test for adjusted using calendar monthrange func[0] and 1day til its a businss day
     # this change canjust be added onto removal/sorting part of paydateside
 
-# if __name__ == '__main__':
-#     unittest.main()
+if __name__ == '__main__':
+    unittest.main()
