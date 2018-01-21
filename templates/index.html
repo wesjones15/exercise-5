@@ -17,12 +17,14 @@
     Start Date: <input type="string" name="start_date" value="{{ start_date }}"><br>
     End Date: <input type="string" name="end_date" value="{{ end_date }}"><br>
     Convention: <select name="convention" value="{{ convention }}">
+        <option selected hidden>{{ convention }}</option>
         <option value="unadjusted">unadjusted</option>
         <option value="following">following</option>
         <option value="modified following">modified following</option>
     </select>
     <br><br>
     Period: <select name="period" value="{{ period }}">
+        <option selected hidden>{{ period }}</option>
         <option value="bimonthly">bimonthly</option>
         <option value="monthly">monthly</option>
         <option value="biannually">biannually</option>
