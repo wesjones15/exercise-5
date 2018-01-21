@@ -12,7 +12,7 @@ class PayTestCase(unittest.TestCase):
 
     def test_proper_adjusted(self):
         expectedResult = [[date(2017, 03, 03), date(2017, 04, 03)], [date(2017, 04, 04), date(2017, 05, 02)], [date(2017, 05, 03), date(2017, 06, 01)]]
-        self.assertEqual(payTime('2017-03-03', '2017-06-01', 'adjusted', 'monthly', 'date'), expectedResult)
+        self.assertEqual(payTime('2017-03-03', '2017-06-01', 'following', 'monthly', 'date'), expectedResult)
 
     def test_partial_month(self):
         expectedResult = [[date(2017, 01, 01), date(2017, 01, 15)]]
@@ -60,7 +60,13 @@ class PayTestCase(unittest.TestCase):
         expectedResult = [[date(2014, 04, 03), date(2014, 10, 02)], [date(2014, 10, 03), date(2015, 04, 02)], [date(2015, 04, 03), date(2015, 06, 27)]]
         self.assertEqual(payTime('2014-04-03', '2015-06-27', 'unadjusted', 'biannually', 'date'), expectedResult)
 
+    def test_convention_reg_following(self):
+        expectedResult = [[date(2018, 03, 01), date(2018, 04, 02)], [date(2018, 04, 03), date(2018, 04, 30)], [date(2018, 05, 01), date(2018, 05, 31)]]
+        self.assertEqual(payTime('2018-03-01', '2018-05-31', 'following', 'monthly', 'date'), expectedResult)
 
+    def test_convention_modified_following(self):
+        expectedResult = [[date(2018, 3, 1), date(2018, 3, 30)], [date(2018, 3, 31), date(2018, 4, 30)], [date(2018, 5, 1), date(2018, 5, 31)]]
+        self.assertEqual(payTime('2018-03-01', '2018-05-31', 'modified following', 'monthly', 'date'), expectedResult)
 
     # add test for adjusted using calendar monthrange func[0] and 1day til its a businss day
     # this change canjust be added onto removal/sorting part of paydateside

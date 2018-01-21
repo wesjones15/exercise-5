@@ -23,7 +23,7 @@ def payTime(startDate, endDate, convention, period, format): #date_format = 'yyy
     for i in range(stRange, endRange): # loops from start month to end month
         endYear = date.timetuple(datesList[-1])[0]
         periodIter = calendar.monthrange(endYear,date.timetuple(datesList[-1])[1])[1] # determines days in month i
-
+            # switch statements instead of repeated if
         if period == 'annually': monthBreaks = [rd(years=1,days=-1), rd(years=1)]
         if period == 'biannually': monthBreaks = [rd(months=6,days=-1), rd(months=6), rd(years=1,days=-1), rd(years=1)]
         if period == 'monthly': monthBreaks = [rd(months=1,days=-1),rd(months=1)]
@@ -36,19 +36,32 @@ def payTime(startDate, endDate, convention, period, format): #date_format = 'yyy
         datesList += tempList
 
     tempDateList = []
-    for u in range(len(datesList)):
+    for u in range(len(datesList)): # for date_iter in datesList:
         if datesList[u] > sDate and datesList[u] < (eDate - rd(days=3)): # td is number of days new cycle cutoff
             tempDateList.append(datesList[u])
-    tempDateList.append(sDate)
-    tempDateList.append(eDate)
+    # tempDateList.append(sDate)
+    # tempDateList.append(eDate)
 
-    if convention == 'adjusted': # pushes date forward if it occurs on weekend
+    if convention == 'following': # pushes date forward if it occurs on weekend
         for u in range(len(tempDateList)):
             eachDate = tempDateList[u].weekday()
             if eachDate >= 5:
                 anotherTempValue = tempDateList[u] + rd(days=(7 - int(eachDate)))
                 if anotherTempValue in tempDateList: anotherTempValue += rd(days=1)
                 tempDateList[u] = anotherTempValue
+
+    elif convention == 'modified following': # pushes date forward if it occurs on weekend
+        for u in range(len(tempDateList)):
+            eachDate = tempDateList[u].weekday()
+            if date.timetuple(tempDateList[u])[2] == eDateTup[2] and eachDate >= 5:
+                anotherTempValue = tempDateList[u] + rd(days=(7 - int(eachDate)))
+                if date.timetuple(anotherTempValue)[1] != date.timetuple(tempDateList[u])[1]: anotherTempValue -= rd(days=3)
+                if anotherTempValue in tempDateList: anotherTempValue += rd(days=1)
+                tempDateList[u] = anotherTempValue
+            elif date.timetuple(tempDateList[u])[2] == sDateTup[2]: tempDateList[u] = tempDateList[u-1] + rd(days=1)
+
+    tempDateList.append(sDate)
+    tempDateList.append(eDate)
     tempDateList.sort()
 
     datesArr = []
