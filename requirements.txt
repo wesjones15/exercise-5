@@ -24,7 +24,5 @@ six==1.4.1
 update-checker==0.16
 urllib3==1.22
 Werkzeug==0.13
-wxPython==3.0.2.0
-wxPython-common==3.0.2.0
 xattr==0.6.4
 zope.interface==4.1.1
