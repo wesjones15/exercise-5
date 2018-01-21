@@ -17,3 +17,6 @@ def process():
     return render_template('index.html', data=data,
                            start_date=start_date, end_date=end_date,
                            convention=convention, period=period)
+
+if __name__ == "__main__":
+	app.run()
